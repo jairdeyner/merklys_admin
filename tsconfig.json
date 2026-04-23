@@ -3,5 +3,16 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@features/*": ["./src/features/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@store/*": ["./src/store/*"],
+      "@lib/*": ["./src/lib/*"]
+    }
+  }
 }
