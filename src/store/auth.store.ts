@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 import type { UserRole } from "@features/auth/types/auth.types";
 
 interface AuthUser {
-  id: string;
+  id: number;
   username: string;
   email: string;
   roles: UserRole[];

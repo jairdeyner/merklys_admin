@@ -1,10 +1,12 @@
-import { Button } from "@shared/components/ui/button";
+import { RouterProvider } from "react-router";
+
 import { Providers } from "./providers";
+import { router } from "./router";
 
 export const App = () => {
   return (
     <Providers>
-      <Button>Hola mundo</Button>
+      <RouterProvider router={router} />
     </Providers>
   );
 };
