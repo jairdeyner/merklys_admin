@@ -1,14 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { UserRole } from "@features/auth/types/auth.types";
-
-interface AuthUser {
-  id: number;
-  username: string;
-  email: string;
-  roles: UserRole[];
-}
+import type { AuthUser } from "@features/auth/types/auth.types";
+import type { UserRole } from "@features/auth/constants/auth.constants";
 
 interface AuthState {
   user: AuthUser | null;
@@ -18,6 +12,7 @@ interface AuthState {
   login: (user: AuthUser, token: string) => void;
   logout: () => void;
   hasRole: (role: UserRole) => boolean;
+  setUser: (user: AuthUser) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -32,6 +27,8 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
 
       hasRole: role => get().user?.roles.includes(role) ?? false,
+
+      setUser: user => set({ user }),
     }),
     {
       name: "auth-storage",

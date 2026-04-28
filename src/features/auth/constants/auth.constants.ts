@@ -1,0 +1,18 @@
+export const AUTH_ERROR_CODES = {
+  ACCOUNT_LOCKED: "ACCOUNT_LOCKED",
+  ACCOUNT_DISABLED: "ACCOUNT_DISABLED",
+  ACCESS_DENIED: "ACCESS_DENIED",
+  UNAUTHORIZED: "UNAUTHORIZED",
+} as const;
+
+export type AuthErrorCode =
+  (typeof AUTH_ERROR_CODES)[keyof typeof AUTH_ERROR_CODES];
+
+export const USER_ROLES = {
+  ADMINISTRADOR: "ADMINISTRADOR",
+  INVENTARIO: "INVENTARIO",
+  VENDEDOR: "VENDEDOR",
+  COLABORADOR: "COLABORADOR",
+} as const;
+
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
