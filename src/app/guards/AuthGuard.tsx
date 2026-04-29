@@ -41,14 +41,11 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
     }
   }, [data, token, setUser]);
 
-  console.table({ token, isAuthenticated });
-
   if (!hasHydrated) {
     return <ProgressBar />;
   }
 
   if (!isAuthenticated || !token) {
-    console.log("navegando desde authguard");
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 
