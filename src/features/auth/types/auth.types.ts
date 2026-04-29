@@ -13,3 +13,14 @@ export interface MeResponse {
   email: string;
   roles: UserRole[];
 }
+
+export interface LoginRequest {
+  identifier: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  tokenType: string;
+  accessToken: string;
+  user: AuthUser;
+}

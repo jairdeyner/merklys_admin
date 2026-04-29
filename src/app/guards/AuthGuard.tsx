@@ -5,6 +5,7 @@ import { useAuthStore } from "@store/auth.store";
 
 import { ROUTES } from "../routes";
 import { useMe } from "@features/auth/hooks/useMe";
+import { ProgressBar } from "@/shared/components/feedback/ProgressBar";
 
 interface AuthGuardProps {
   children: JSX.Element;
@@ -28,7 +29,9 @@ interface AuthGuardProps {
 export const AuthGuard = ({ children }: AuthGuardProps) => {
   const token = useAuthStore(state => state.token);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const hasHydrated = useAuthStore(state => state._hasHydrated);
   const setUser = useAuthStore(state => state.setUser);
+  const logout = useAuthStore(state => state.logout);
 
   const { data, isLoading, isError } = useMe();
 
@@ -38,15 +41,23 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
     }
   }, [data, token, setUser]);
 
+  console.table({ token, isAuthenticated });
+
+  if (!hasHydrated) {
+    return <ProgressBar />;
+  }
+
   if (!isAuthenticated || !token) {
+    console.log("navegando desde authguard");
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <ProgressBar />;
   }
 
   if (isError) {
+    logout();
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 

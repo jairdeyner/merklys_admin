@@ -11,9 +11,9 @@ interface GuestGuardProps {
 
 export const GuestGuard = ({ children }: GuestGuardProps) => {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-  console.log("Montando");
+  const token = useAuthStore(state => state.token);
 
-  if (isAuthenticated) {
+  if (isAuthenticated && token) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
