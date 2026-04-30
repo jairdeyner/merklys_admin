@@ -6,6 +6,8 @@ import { useAuthStore } from "@store/auth.store";
 import { ROUTES } from "../routes";
 import { useMe } from "@features/auth/hooks/useMe";
 import { ProgressBar } from "@/shared/components/feedback/ProgressBar";
+import { toast } from "sonner";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 
 interface AuthGuardProps {
   children: JSX.Element;
@@ -31,9 +33,9 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const hasHydrated = useAuthStore(state => state._hasHydrated);
   const setUser = useAuthStore(state => state.setUser);
-  const logout = useAuthStore(state => state.logout);
+  const logout = useLogout();
 
-  const { data, isLoading, isError } = useMe();
+  const { data, isLoading, isError, error } = useMe();
 
   useEffect(() => {
     if (data && token) {
@@ -54,6 +56,14 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
   }
 
   if (isError) {
+    const status = error.response?.status;
+
+    if (status !== 401) {
+      toast.error("Ocurrió un error inesperado, inicia sesión nuevamente", {
+        position: "top-center",
+      });
+    }
+
     logout();
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }

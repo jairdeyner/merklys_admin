@@ -4,6 +4,7 @@ import { httpClient } from "./axios.instance";
 import { useAuthStore } from "@store/auth.store";
 import { AUTH_ERROR_CODES } from "@features/auth/constants/auth.constants";
 import { toast } from "sonner";
+import { queryClient } from "../query/query-client";
 
 const ACCOUNT_ERROR_CODES = [
   AUTH_ERROR_CODES.ACCOUNT_DISABLED,
@@ -43,11 +44,13 @@ export function setupInterceptors(): void {
       );
 
       if (status === 401 && !isPublicPath) {
+        queryClient.clear();
         useAuthStore.getState().logout();
         toast.error(message, { position: "top-center" });
       }
 
       if (status === 403 && ACCOUNT_ERROR_CODES.includes(code)) {
+        queryClient.clear();
         useAuthStore.getState().logout();
 
         if (!isPublicPath) {

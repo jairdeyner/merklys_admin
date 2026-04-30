@@ -8,7 +8,7 @@ import { DashboardLayout } from "@layouts/dashboard-layout";
 import { NotFoundPage } from "@shared/components/NotFoundPage";
 
 import { AuthGuard, GuestGuard, RoleGuard } from "./guards";
-import { USER_ROLES } from "@/features/auth/constants/auth.constants";
+import { ROLE_GROUPS } from "@features/auth/constants/auth.constants";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +39,7 @@ export const router = createBrowserRouter([
           </AuthGuard>
         ),
         children: [
+          // Accesible para todos los roles autenticados
           {
             path: ROUTES.DASHBOARD,
             lazy: {
@@ -47,19 +48,117 @@ export const router = createBrowserRouter([
                   .DashboardPage,
             },
           },
+
+          // Administración → solo ADMINISTRADOR
           {
-            path: "employees",
             element: (
-              <RoleGuard allowedRoles={[USER_ROLES.ADMINISTRADOR]}>
+              <RoleGuard allowedRoles={ROLE_GROUPS.ADMIN_ONLY}>
                 <Outlet />
               </RoleGuard>
             ),
-            lazy: {
-              Component: async () =>
-                (await import("@features/employees/pages/EmployeesPage"))
-                  .EmployeesPage,
-            },
+            children: [
+              {
+                path: ROUTES.EMPLOYEES,
+                lazy: {
+                  Component: async () =>
+                    (await import("@features/employees/pages/EmployeesPage"))
+                      .EmployeesPage,
+                },
+              },
+              // {
+              //   path: ROUTES.USERS,
+              //   lazy: {
+              //     Component: async () =>
+              //       (await import("@features/users/pages/UsersPage")).UsersPage,
+              //   },
+              // },
+            ],
           },
+
+          // Inventarios y Catálogo → ADMINISTRADOR + INVENTARIO
+          // {
+          //   element: (
+          //     <RoleGuard allowedRoles={ROLE_GROUPS.INVENTORY_ACCESS}>
+          //       <Outlet />
+          //     </RoleGuard>
+          //   ),
+          //   children: [
+          //     {
+          //       path: ROUTES.INVENTORY.ROOT,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/inventory/pages/InventoryDashboardPage"))
+          //             .InventoryDashboardPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.INVENTORY.STOCK,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/inventory/pages/StockPage"))
+          //             .StockPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.INVENTORY.LOCATIONS,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/inventory/pages/LocationsPage"))
+          //             .LocationsPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.INVENTORY.MOVEMENTS,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/inventory/pages/MovementsPage"))
+          //             .MovementsPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.CATALOG.PRODUCTS,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/catalog/pages/ProductsPage"))
+          //             .ProductsPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.CATALOG.CATEGORIES,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/catalog/pages/CategoriesPage"))
+          //             .CategoriesPage,
+          //       },
+          //     },
+          //     {
+          //       path: ROUTES.CATALOG.ATTRIBUTES,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/catalog/pages/AttributesPage"))
+          //             .AttributesPage,
+          //       },
+          //     },
+          //   ],
+          // },
+
+          // POS → ADMINISTRADOR + VENDEDOR
+          // {
+          //   element: (
+          //     <RoleGuard allowedRoles={ROLE_GROUPS.POS_ACCESS}>
+          //       <Outlet />
+          //     </RoleGuard>
+          //   ),
+          //   children: [
+          //     {
+          //       path: ROUTES.POS,
+          //       lazy: {
+          //         Component: async () =>
+          //           (await import("@features/pos/pages/PosPage")).PosPage,
+          //       },
+          //     },
+          //   ],
+          // },
         ],
       },
 

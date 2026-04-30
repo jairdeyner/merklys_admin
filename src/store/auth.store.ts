@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 import type { AuthUser } from "@features/auth/types/auth.types";
 import type { UserRole } from "@features/auth/constants/auth.constants";
@@ -18,37 +18,49 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      _hasHydrated: false,
+  devtools(
+    persist(
+      (set, get) => ({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        _hasHydrated: false,
 
-      setHydrated: () => set({ _hasHydrated: true }),
+        setHydrated: () =>
+          set({ _hasHydrated: true }, undefined, "auth/setHydrated"),
 
-      login: (user, token) => set({ user, token, isAuthenticated: true }),
+        login: (user, token) =>
+          set({ user, token, isAuthenticated: true }, undefined, "auth/login"),
 
-      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+        logout: () =>
+          set(
+            { user: null, token: null, isAuthenticated: false },
+            undefined,
+            "auth/logout"
+          ),
 
-      hasRole: role => get().user?.roles.includes(role) ?? false,
+        hasRole: role => get().user?.roles.includes(role) ?? false,
 
-      setUser: user => set({ user }),
-    }),
-    {
-      name: "auth-storage",
-      partialize: state => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
+        setUser: user => set({ user }, undefined, "auth/setUser"),
       }),
-      onRehydrateStorage: () => {
-        return (state, error) => {
-          if (!error) {
-            state?.setHydrated();
-          }
-        };
-      },
+      {
+        name: "auth-storage",
+        partialize: state => ({
+          user: state.user,
+          token: state.token,
+          isAuthenticated: state.isAuthenticated,
+        }),
+        onRehydrateStorage: () => {
+          return (state, error) => {
+            if (!error) {
+              state?.setHydrated();
+            }
+          };
+        },
+      }
+    ),
+    {
+      name: "AuthStore",
     }
   )
 );

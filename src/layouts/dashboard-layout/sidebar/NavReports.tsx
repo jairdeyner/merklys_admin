@@ -15,12 +15,7 @@ import {
   useSidebar,
 } from "@shared/components/ui/sidebar";
 
-import {
-  MoreHorizontal,
-  Redo,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { MoreHorizontal, Redo, Trash2, type LucideIcon } from "lucide-react";
 
 export function NavReports({
   reports,

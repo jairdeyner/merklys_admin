@@ -16,3 +16,9 @@ export const USER_ROLES = {
 } as const;
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+
+export const ROLE_GROUPS = {
+  ADMIN_ONLY: [USER_ROLES.ADMINISTRADOR],
+  INVENTORY_ACCESS: [USER_ROLES.ADMINISTRADOR, USER_ROLES.INVENTARIO],
+  POS_ACCESS: [USER_ROLES.ADMINISTRADOR, USER_ROLES.VENDEDOR],
+} as const satisfies Record<string, UserRole[]>;

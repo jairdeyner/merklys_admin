@@ -1,3 +1,6 @@
+import { useAuthStore } from "@store/auth.store";
+import { useUiStore, type ModuleKey } from "@store/ui.store";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,22 +18,26 @@ import {
 } from "@shared/components/ui/sidebar";
 
 import { ChevronsUpDown, Moon } from "lucide-react";
-import { useState } from "react";
+import { NAV_CONFIG, type NavModule } from "./nav.config";
 
-export function BrandSwitcher({
-  brands,
-}: {
-  brands: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
+export function ModuleSwitcher() {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = useState(brands[0]);
 
-  if (!activeTeam) {
-    return null;
+  const activeModule = useUiStore(state => state.activeModule);
+  const setActiveModule = useUiStore(state => state.setActiveModule);
+  const hasRole = useAuthStore(state => state.hasRole);
+
+  const allowedModules = (
+    Object.entries(NAV_CONFIG) as [ModuleKey, NavModule][]
+  ).filter(([, module]) => module.allowedRoles.some(role => hasRole(role)));
+
+  let activeConfig = NAV_CONFIG[activeModule];
+
+  const hasModuleAccess = allowedModules.some(([key]) => key === activeModule);
+
+  if (!hasModuleAccess) {
+    activeConfig = NAV_CONFIG[allowedModules[0][0]];
+    setActiveModule(allowedModules[0][0]);
   }
 
   return (
@@ -43,11 +50,15 @@ export function BrandSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
+                <activeConfig.icon className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate font-medium">
+                  {activeConfig.label}
+                </span>
+                <span className="truncate text-xs">
+                  {activeConfig.description}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -59,18 +70,18 @@ export function BrandSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Brands
+              Módulos
             </DropdownMenuLabel>
-            {brands.map((team, index) => (
+            {allowedModules.map(([key, module], index) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={key}
+                onClick={() => setActiveModule(key)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
+                  <module.icon className="size-3.5 shrink-0" />
                 </div>
-                {team.name}
+                {module.label}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
