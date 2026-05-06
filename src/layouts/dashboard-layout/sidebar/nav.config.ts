@@ -47,13 +47,13 @@ export const NAV_CONFIG: Record<ModuleKey, NavModule> = {
         title: "Usuarios",
         url: ROUTES.USERS,
         icon: Users,
-        items: [{ title: "Lista", url: ROUTES.USERS }],
+        items: [{ title: "Todos", url: ROUTES.USERS }],
       },
       {
         title: "Colaboradores",
         url: ROUTES.EMPLOYEES,
         icon: Bot,
-        items: [{ title: "Lista", url: ROUTES.EMPLOYEES }],
+        items: [{ title: "Todos los colaboradores", url: ROUTES.EMPLOYEES }],
       },
       {
         title: "Roles",
